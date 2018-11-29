@@ -262,9 +262,19 @@ class HttpClient {
                 if (!currentApi) {
                     throw new Error("api isn't set.");
                 }
-                if (validateInput && currentApi.request.params && currentApi.request.params.hasChildren()) {
+                if (currentApi.request.params && currentApi.request.params.hasChildren()) {
                     const paramsForValidation = getParamsForValidation();
-                    currentApi.request.params.validate(paramsForValidation, paramsForValidation, null);
+                    try {
+                        currentApi.request.params.validate(paramsForValidation, paramsForValidation, null);
+                    }
+                    catch (error) {
+                        if (validateInput) {
+                            throw error;
+                        }
+                        else {
+                            console.log(error.message);
+                        }
+                    }
                 }
                 const requestParams = {
                     method: currentApi.method,
